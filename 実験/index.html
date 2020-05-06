@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>タイピングゲーム</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Ruda:400,900,700" rel="stylesheet">
+
+  <!-- Bootstrap CSS File -->
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Libraries CSS Files -->
+  <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="lib/animations/animations.css" rel="stylesheet">
+  <link href="lib/hover-pack/hover-pack.css" rel="stylesheet">
+
+  <!-- Main Stylesheet File -->
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/colors/color-74c9be.css" rel="stylesheet">
+
+
+
+   <!-- ここから下はタイピングのもの -->
+
+   <!-- <link rel="stylesheet" type="text/css" href="typing.css" /> -->
+   <audio src ="_sound_anime_mp3_incorrect1.mp3" id="missaudio">現環境では音が鳴りません</audio>
+   <audio src ="_sound_battle_mp3_handgun-out-bullets1.mp3" id="correctaudio"></audio>
+   
+
+<script>
+   var wordlist = ["to give energy or support to something","to start to do something","to improve or add to something","to clearly mention a person, thing, etc","able or allowed to do something","to combine something into something else","including many or all parts","in the end","the way something has been arranged","an agreement to borrow money to buy a home","an established limit that controls how something should be done","to keep","to form something by combining multiple things","a great amount of something","still happening","available to only one person or group","the act of following rules or directions","something that exists separately","to carry out a plan or orders","the skill or knowledge of an expert","the place where something happens","to prove that something is true","amazing","the state of being legally responsible for something","the value of something that is owned, such as a property or part of a company","to enter as a member","rules explaining how things should be carried out in a particular situation","to start or continue a war or conflict","to do better than others","the price of insurance","to make something happen more easily or effectively","to find the cause of a problem","someone who receives something","to accept an idea or concept","to cause something","able oto be used","something which comes from the past","the center or busiest place","to be made up of","having two of something","capable of being used together","the amount of something taken in","continuing or repeating for a long time","a short period of time","to send out someone or something for a spedific reason",];
+   var wordlistJapanese = ["fuel","implement","enhance","specify","eligible","incorporate","comprehensive","ultimately","configuration","mortgage","parameter","retain","integrate","array","ongoing","exclusive","compliance","entity","execute","expertise","venue","verify","stunning","liability","equity","enroll","protocol","wage","excel","premium","facilitate","diagnose","recipient","embrace","trigger","sustainable","legacy","hub","comprise","dual","compatible","intake","chronic","spell","deploy",];
+   
+       var time_limit = 60;
+        var readytime = 3;
+        var score;
+        var correct;
+        var mistake;
+        var char_num = 0;
+        var word_char;
+        var random;
+        function ready(){
+            readytime = 3;
+            scoredis.innerHTML="";
+            start_button.style.visibility ="hidden";
+            var readytimer = setInterval(function(){
+                count.innerHTML=readytime;
+                readytime--;
+                if(readytime < 0){
+                   clearInterval(readytimer);
+                    gameStart();
+                   }
+            },1000);
+        }
+        function gameStart(){
+            score = 0.0;
+            mistake = 0;
+            correct = 0;
+            wordDisplay();
+            var time_remaining = time_limit;
+            var gametimer = setInterval(function(){
+               count.innerHTML="残り時間："+time_remaining;
+                time_remaining--;
+                if(time_remaining <= 0){
+                clearInterval(gametimer);
+                    finish();
+            }
+            },1000);
+        }
+        function wordDisplay(){
+            random = Math.floor( Math.random() * wordlist.length );
+            word.innerHTML=wordlist[random];
+            japanese.innerHTML=wordlistJapanese[random];
+            charInsort();
+        }
+        function charInsort(){
+            word_char = wordlist[random].charAt(char_num);
+        }
+        function finish(){
+            score = Math.floor(Math.pow(correct,2) * Math.pow((correct/(correct+mistake)),5));
+            scoredis.innerHTML="スコア:"+score+"点"+"<hr>正タイプ数:"+correct+"<br>ミスタイプ数:"+mistake+"<br>正答率"+(correct/(correct+mistake)*100).toFixed(1)+"%";
+            count.innerHTML="";
+            word.innerHTML="";
+            japanese.innerHTML="";
+            start_button.style.visibility ="visible";
+            word_char=0;
+            random = 0;
+            char_num = 0;
+        }
+   document.onkeydown = function(e) {
+       if(e.keyCode == 189){
+          keyStr = "-";
+          }else if(e.keyCode == 188){
+                   keyStr = ","
+                   }else{
+    var keyStr = String.fromCharCode(e.keyCode);
+       keyStr = keyStr.toLowerCase();
+          }
+       if(keyStr == word_char){
+           document.getElementById('missaudio').pause();
+           document.getElementById('missaudio').currentTime = 0;
+           document.getElementById('correctaudio').pause();
+                      document.getElementById('correctaudio').currentTime = 0;
+           document.getElementById('correctaudio').play();
+           word.innerHTML="<span style='color: red;'>"+wordlist[random].substr(0,char_num+1)+"</span>"+wordlist[random].substr(char_num+1,wordlist[random].length);
+           char_num++;
+           correct++;
+           charInsort();
+          }else{
+                         document.getElementById('missaudio').pause();
+              document.getElementById('missaudio').currentTime = 0;
+              document.getElementById('correctaudio').pause();
+              document.getElementById('correctaudio').currentTime = 0;
+              mistake++;
+              document.getElementById('missaudio').play();
+          }
+       if(char_num == wordlist[random].length){
+           char_num=0;
+           wordDisplay();
+          }
+   };
+    
+   </script>
+
+</head>
+
+<body>
+
+  <div id="headerwrap">
+    <div class="container">
+      <div class="row centered">
+        <div class="col-lg-8 col-lg-offset-2 mt">
+          <h1 class="animation slideDown">We love typing games.<br> Now we can learn English words through this game.</h1>
+          <p class="mt"><button type="button" id="start_button" class="btn btn-cta btn-l start" onclick="ready()">START</button></p>
+        </div>
+       
+    
+      </div>
+      <!-- /row -->
+    </div>
+    <!-- /container -->
+  </div>
+  
+
+
+
+
+  <div id="copyrights">
+    <div class="container">
+      <p>
+    </p>
+      <div class="credits">
+        <!--
+          You are NOT allowed to delete the credit link to TemplateMag with free version.
+          You can delete the credit link only if you bought the pro version.
+          Buy the pro version with working PHP/AJAX contact form: https://templatemag.com/marco-bootstrap-agency-template/
+          Licensing information: https://templatemag.com/license/
+      </div>
+    </div>
+  </div> 
+
+
+
+  <!-- JavaScript Libraries -->
+
+  <div id="count" style="font-size: 15pt; color: tomato;"></div>
+  <h1><div id="japanese" style="font-size: 25pt;color:tomato"></div></h1>
+  <h2><div id="word" style="font-size: 40pt;color:white"></div></h2>
+  <div id="scoredis"></div>
+
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+  <script src="lib/php-mail-form/validate.js"></script>
+  <script src="lib/hover-pack/hover-pack.js"></script>
+
+  <!-- Template Main Javascript File -->
+  <script src="js/main.js"></script>
+
+</body>
+</html>
